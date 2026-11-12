@@ -1,15 +1,18 @@
-class impressora {
-    int tipo;
-    String modelo;
-    String conexao;
-    int parametro;
-    boolean conexaoAberta = false;
+import java.util.Scanner;
 
-    void configurarConexao(int t, String m, String c, int p) {
-        tipo = t;
-        modelo = m;
-        conexao = c;
-        parametro = p;
+class impressora {
+    static int tipo;
+    static String modelo;
+    static  String conexao;
+    static int parametro;
+    static boolean conexaoAberta = false;
+    static Scanner ler = new Scanner(System.in);
+
+    void configurarConexao() {
+        tipo = ler.nextInt();
+        modelo = ler.next();
+        conexao = ler.next();
+        parametro = ler.nextInt();
 
         System.out.println("Configuração da conexão completa!");
     }
@@ -48,11 +51,12 @@ class impressora {
         }
     }
 
-    void imprimirTexto(String texto) {
+    void imprimirTexto() {
         if (conexaoAberta == true) {
-            int retorno = ImpressoraDLL.INSTANCE.ImpressaoTexto(texto, 0, 0, 0);
+            int retorno = ImpressoraDLL.INSTANCE.ImpressaoTexto("Teste", 1, 4, 0);
 
             if (retorno >= 0) {
+                ImpressoraDLL.INSTANCE.Corte(5);
                 System.out.println("Texto enviado para impressao!");
             } else {
                 System.out.println("Erro ao imprimir. Codigo: " + retorno);
