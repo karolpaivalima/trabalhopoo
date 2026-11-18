@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-class usuario {
+class Usuario {
     String nome;
     String senha;
     boolean logado = false;

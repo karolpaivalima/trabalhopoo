@@ -1,12 +1,12 @@
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
-public class main {
+public class Main {
     public static void main(String[] args) {
 
         Scanner entrada = new Scanner(System.in);
 
-        usuario cadastro = new usuario();
+        Usuario cadastro = new Usuario();
 
         cadastro.cadastrar(entrada);
         cadastro.entrar(entrada);
@@ -15,8 +15,8 @@ public class main {
             return;
         }
 
-        impressora impressora1 = new impressora();
-        impressora.ler = entrada;
+        Impressora impressora1 = new Impressora();
+        Impressora.ler = entrada;
 
         int opcao = -1;
 
@@ -61,7 +61,7 @@ public class main {
                         break;
 
                     case 4:
-                        if (impressora.conexaoAberta) {
+                        if (Impressora.conexaoAberta) {
 
                             System.out.print("Digite o texto: ");
                             String texto = entrada.nextLine();
@@ -74,7 +74,7 @@ public class main {
                         break;
 
                     case 5:
-                        if (impressora.conexaoAberta) {
+                        if (Impressora.conexaoAberta) {
 
                             System.out.print("Digite o conteudo do QR Code: ");
                             String qrCode = entrada.nextLine();
@@ -87,12 +87,9 @@ public class main {
                         break;
 
                     case 6:
-                        if (impressora.conexaoAberta) {
+                        if (Impressora.conexaoAberta) {
 
-                            System.out.print("Digite o codigo de barras: ");
-                            String codigo = entrada.nextLine();
-
-                            impressora1.imprimirCodigoBarras(codigo);
+                            impressora1.imprimirCodigoBarras("123456789012");
 
                         } else {
                             System.out.println("Abra a conexao primeiro!");
@@ -112,7 +109,7 @@ public class main {
                         break;
 
                     case 10:
-                        if (impressora.conexaoAberta) {
+                        if (Impressora.conexaoAberta) {
 
                             System.out.print("Quantidade de sinais sonoros (1 a 5): ");
                             int quantidade = entrada.nextInt();
@@ -126,7 +123,7 @@ public class main {
                         break;
 
                     case 0:
-                        if (impressora.conexaoAberta) {
+                        if (Impressora.conexaoAberta) {
                             impressora1.fecharConexao();
                         }
 

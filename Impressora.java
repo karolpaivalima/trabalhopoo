@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.InputMismatchException;
 import java.io.File;
 
-class impressora {
+class Impressora {
 
     static int tipo;
     static String modelo;
@@ -453,7 +453,7 @@ class impressora {
         try {
 
             int retorno = ImpressoraDLL.INSTANCE.SinalSonoro(
-                    quantidade, 50, 5
+                    quantidade, 30, 5
             );
 
             if (retorno == 0) {
