@@ -67,27 +67,85 @@ public class main {
                         break;
 
                     case 5:
-                        System.out.println("Imprimir QR Code");
+                        if (impressora.conexaoAberta == true) {
+                            System.out.print("Digite o texto do QR Code: ");
+                            String texto = entrada.nextLine();
+                            impressora1.imprimirQRCode(texto);
+                        } else {
+                            System.out.println("Conexao fechada. Abra a conexao antes.");
+                        }
                         break;
 
                     case 6:
-                        System.out.println("Imprimir codigo de barras");
+                        if (impressora.conexaoAberta == true) {
+                            System.out.print("Digite os dados do codigo de barras: ");
+                            String dados = entrada.nextLine();
+                            impressora1.imprimirCodigoBarras(dados);
+                        } else {
+                            System.out.println("Conexao fechada. Abra a conexao antes.");
+                        }
                         break;
 
                     case 7:
-                        System.out.println("Imprimir XML SAT");
+                        if (impressora.conexaoAberta == true) {
+                            System.out.print("Digite o caminho do arquivo XML SAT: ");
+                            String caminho = entrada.nextLine();
+
+                            try {
+                                String xml = java.nio.file.Files.readString(
+                                        java.nio.file.Path.of(caminho)
+                                );
+
+                                impressora1.imprimirXMLSAT(xml);
+
+                            } catch (java.io.IOException e) {
+                                System.out.println("Erro ao ler o arquivo XML SAT.");
+                            }
+
+                        } else {
+                            System.out.println("Conexao fechada. Abra a conexao antes.");
+                        }
                         break;
 
                     case 8:
-                        System.out.println("Imprimir XML de cancelamento");
+                        if (impressora.conexaoAberta == true) {
+                            System.out.print("Digite o caminho do XML de cancelamento: ");
+                            String caminhoXML = entrada.nextLine();
+
+                            System.out.print("Digite o caminho do arquivo ASS_QRCODE: ");
+                            String caminhoASS = entrada.nextLine();
+
+                            try {
+                                String xml = java.nio.file.Files.readString(
+                                        java.nio.file.Path.of(caminhoXML)
+                                );
+
+                                String assinatura = java.nio.file.Files.readString(
+                                        java.nio.file.Path.of(caminhoASS)
+                                ).trim();
+
+                                if (assinatura.startsWith("ASS_QRCODE")) {
+                                    assinatura = assinatura.substring(assinatura.indexOf("\"") + 1);
+                                    assinatura = assinatura.substring(0, assinatura.indexOf("\""));
+                                }
+
+                                impressora1.imprimirXMLCancelamento(xml, assinatura);
+
+                            } catch (java.io.IOException e) {
+                                System.out.println("Erro ao ler os arquivos de cancelamento.");
+                            }
+                        } else {
+                            System.out.println("Conexao fechada. Abra a conexao antes.");
+                        }
                         break;
+1
 
                     case 9:
-                        System.out.println("Abrir gaveta");
+                        impressora1.abrirGaveta();
                         break;
 
                     case 10:
-                        System.out.println("Sinal sonoro");
+                        impressora1.sinalSonoro();
                         break;
 
                     default:

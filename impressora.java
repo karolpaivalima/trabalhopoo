@@ -81,4 +81,79 @@ class impressora {
             System.out.println("Conexao fechada. Abra a conexao antes.");
         }
     }
+
+    void imprimirCodigoBarras(String dados) {
+        if (conexaoAberta == true) {
+            int retorno = ImpressoraDLL.INSTANCE.ImpressaoCodigoBarras(8, dados, 100, 3, 1);
+
+            if (retorno == 0) {
+                System.out.println("Codigo de barras impresso com sucesso!");
+            } else {
+                System.out.println("Erro ao imprimir codigo de barras. Codigo: " + retorno);
+            }
+
+        } else {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+        }
+    }
+
+    void imprimirXMLSAT(String xml) {
+        if (conexaoAberta == true) {
+            int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLSAT(xml, 0);
+
+            if (retorno == 0) {
+                System.out.println("XML SAT impresso com sucesso!");
+            } else {
+                System.out.println("Erro ao imprimir XML SAT. Codigo: " + retorno);
+            }
+
+        } else {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+        }
+    }
+
+    void imprimirXMLCancelamento(String xml, String assQRCode) {
+        if (conexaoAberta == true) {
+            int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(xml, assQRCode, 0);
+
+            if (retorno == 0) {
+                System.out.println("XML de cancelamento impresso com sucesso!");
+            } else {
+                System.out.println("Erro ao imprimir cancelamento. Codigo: " + retorno);
+            }
+
+        } else {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+        }
+    }
+
+    void abrirGaveta() {
+        if (conexaoAberta == true) {
+            int retorno = ImpressoraDLL.INSTANCE.AbreGaveta(1, 100, 100);
+
+            if (retorno == 0) {
+                System.out.println("Comando para abrir gaveta enviado!");
+            } else {
+                System.out.println("Erro ao abrir gaveta. Codigo: " + retorno);
+            }
+
+        } else {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+        }
+    }
+
+    void sinalSonoro() {
+        if (conexaoAberta == true) {
+            int retorno = ImpressoraDLL.INSTANCE.SinalSonoro(1, 50, 5);
+
+            if (retorno == 0) {
+                System.out.println("Sinal sonoro executado com sucesso!");
+            } else {
+                System.out.println("Erro ao executar sinal sonoro. Codigo: " + retorno);
+            }
+
+        } else {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+        }
+    }
 }
