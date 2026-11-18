@@ -112,7 +112,12 @@ class impressora {
                 System.out.println("Erro ao conectar. Codigo: " + retorno);
             }
 
+        } catch (UnsatisfiedLinkError e) {
+            conexaoAberta = false;
+            System.out.println("Erro ao carregar a DLL!");
+
         } catch (Exception e) {
+            conexaoAberta = false;
             System.out.println("Erro ao conectar a impressora! :(");
         }
     }
@@ -137,6 +142,9 @@ class impressora {
 
                 System.out.println("Erro ao desconectar. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Erro ao fechar a conexao!");
@@ -166,6 +174,9 @@ class impressora {
 
                 System.out.println("Erro ao imprimir. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Erro na impressao!");
@@ -201,6 +212,9 @@ class impressora {
                 System.out.println("Erro na impressao. Codigo: " + retorno);
             }
 
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
+
         } catch (Exception e) {
             System.out.println("Nao foi possivel imprimir o texto! :(");
         }
@@ -234,6 +248,9 @@ class impressora {
                 System.out.println("Erro no QR Code. Codigo: " + retorno);
             }
 
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
+
         } catch (Exception e) {
             System.out.println("Erro ao imprimir QR Code!");
         }
@@ -266,6 +283,9 @@ class impressora {
 
                 System.out.println("Erro na impressao. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Erro ao imprimir codigo de barras!");
@@ -315,6 +335,9 @@ class impressora {
 
                 System.out.println("Erro no XML SAT. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Erro ao imprimir XML SAT!");
@@ -375,6 +398,9 @@ class impressora {
                 System.out.println("Erro no cancelamento. Codigo: " + retorno);
             }
 
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
+
         } catch (Exception e) {
             System.out.println("Erro ao imprimir cancelamento SAT!");
         }
@@ -399,6 +425,9 @@ class impressora {
 
                 System.out.println("Erro ao abrir gaveta. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Nao foi possivel abrir a gaveta!");
@@ -436,6 +465,9 @@ class impressora {
                 System.out.println("Erro no sinal sonoro. Codigo: " + retorno);
             }
 
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
+
         } catch (Exception e) {
             System.out.println("Erro ao emitir sinal sonoro!");
         }
@@ -460,6 +492,9 @@ class impressora {
 
                 System.out.println("Erro ao cortar papel. Codigo: " + retorno);
             }
+
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Erro ao acessar a DLL!");
 
         } catch (Exception e) {
             System.out.println("Erro ao cortar papel!");
