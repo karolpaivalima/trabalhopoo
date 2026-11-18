@@ -1,19 +1,19 @@
 import java.util.Scanner;
+import java.util.InputMismatchException;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.io.IOException;
 
 class impressora {
+
     static int tipo;
     static String modelo;
     static String conexao;
     static int parametro;
     static boolean conexaoAberta = false;
     static boolean verificarConexao = false;
-    static Scanner ler = new Scanner(System.in);
+    static Scanner ler;
 
     void configurarConexao() {
+
         if (conexaoAberta) {
             System.out.println("Feche a conexao antes de configurar novamente.");
             return;
@@ -26,70 +26,67 @@ class impressora {
         System.out.println("2 - Serial (RS232)");
         System.out.println("3 - Rede (TCP/IP)");
         System.out.println("4 - Bluetooth");
-        System.out.print("Tipo: ");
 
-        if (!ler.hasNextInt()) {
-            System.out.println("Entrada invalida. Digite um numero!");
+        try {
+
+            System.out.print("Tipo: ");
+            tipo = ler.nextInt();
             ler.nextLine();
-            return;
-        }
 
-        tipo = ler.nextInt();
+            if (tipo < 1 || tipo > 4) {
+                System.out.println("Tipo invalido!");
+                return;
+            }
 
-        if (tipo < 1 || tipo > 4) {
-            System.out.println("Tipo invalido!");
-            return;
-        }
+            System.out.print("Modelo da impressora (i8/i9): ");
+            modelo = ler.nextLine();
 
-        System.out.print("Modelo da impressora (i8/i9): ");
-        modelo = ler.next();
+            if (!modelo.equals("i8") && !modelo.equals("i9")) {
+                System.out.println("Modelo invalido!");
+                return;
+            }
 
-        if (!modelo.equalsIgnoreCase("i8") &&
-                !modelo.equalsIgnoreCase("i9")) {
-            System.out.println("Modelo invalido!");
-            return;
-        }
+            System.out.print("Digite a conexao: ");
+            conexao = ler.nextLine();
 
-        System.out.print("Digite a conexao: ");
-        conexao = ler.next();
+            if (conexao.equals("")) {
+                System.out.println("Conexao invalida!");
+                return;
+            }
 
-        if (conexao.isBlank()) {
-            System.out.println("Conexao invalida!");
-            return;
-        }
-
-        System.out.print("Digite o parametro da conexao: ");
-
-        if (!ler.hasNextInt()) {
-            System.out.println("Parametro invalido!");
+            System.out.print("Digite o parametro da conexao: ");
+            parametro = ler.nextInt();
             ler.nextLine();
-            return;
+
+            if (tipo == 1 && parametro != 0) {
+                System.out.println("Para USB, o parametro deve ser 0.");
+                return;
+            }
+
+            if (tipo == 2 && parametro <= 0) {
+                System.out.println("Velocidade serial invalida!");
+                return;
+            }
+
+            if (tipo == 3 && (parametro <= 0 || parametro > 65535)) {
+                System.out.println("Porta de rede invalida!");
+                return;
+            }
+
+            verificarConexao = true;
+            System.out.println("Configuracao concluida! :)");
+
+        } catch (InputMismatchException e) {
+
+            System.out.println("Entrada invalida. Digite apenas numeros!");
+            ler.nextLine();
         }
-
-        parametro = ler.nextInt();
-
-        if (tipo == 1 && parametro != 0) {
-            System.out.println("Para USB, o parametro deve ser 0.");
-            return;
-        }
-
-        if (tipo == 2 && parametro <= 0) {
-            System.out.println("Velocidade serial invalida!");
-            return;
-        }
-
-        if (tipo == 3 && (parametro <= 0 || parametro > 65535)) {
-            System.out.println("Porta de rede invalida!");
-            return;
-        }
-
-        verificarConexao = true;
-        System.out.println("Configuracao da conexao completa!");
     }
 
     void abrirConexao() {
+
         if (!verificarConexao) {
-            System.out.println("Configure a impressora na opcao 1 primeiro!");
+            System.out.println("Configure a impressora primeiro!");
             return;
         }
 
@@ -99,157 +96,184 @@ class impressora {
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.AbreConexaoImpressora(
                     tipo, modelo, conexao, parametro
             );
 
-            System.out.println("Retorno da DLL: " + retorno);
-
             if (retorno == 0) {
+
                 conexaoAberta = true;
-                System.out.println("Impressora conectada com sucesso!");
+                System.out.println("Impressora conectada com sucesso! :)");
+
             } else {
+
                 conexaoAberta = false;
                 System.out.println("Erro ao conectar. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            conexaoAberta = false;
-            System.out.println("Erro ao carregar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao conectar a impressora! :(");
         }
     }
 
     void fecharConexao() {
+
         if (!conexaoAberta) {
             System.out.println("A impressora ja esta desconectada!");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.FechaConexaoImpressora();
 
             if (retorno == 0) {
+
                 conexaoAberta = false;
                 System.out.println("Impressora desconectada com sucesso!");
+
             } else {
+
                 System.out.println("Erro ao desconectar. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao fechar a conexao!");
         }
     }
 
-    // Metodo de teste original do professor
+    // Metodo original do professor
     void imprimirTexto() {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImpressaoTexto(
                     "Teste", 1, 4, 0
             );
 
             if (retorno >= 0) {
+
                 System.out.println("Texto de teste enviado!");
                 cortarPapel();
+
             } else {
+
                 System.out.println("Erro ao imprimir. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro na impressao!");
         }
     }
 
-    // Impressao personalizada com parametros do Mandu
+    // Impressao de texto personalizado
     void imprimirTexto(String texto) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
-        if (texto.isBlank()) {
-            System.out.println("Texto vazio. Digite algo!");
+        if (texto.equals("")) {
+            System.out.println("Digite algum texto!");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImpressaoTexto(
-                    texto, 1, 0, 50
+                    texto, 1, 0, 0
             );
 
             if (retorno >= 0) {
-                System.out.println("Texto enviado para impressao!");
+
+                System.out.println("Texto enviado para impressao! :)");
                 cortarPapel();
+
             } else {
-                System.out.println("Erro na impressao: " + retorno);
+
+                System.out.println("Erro na impressao. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Nao foi possivel imprimir o texto! :(");
         }
     }
 
     void imprimirQRCode(String texto) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
-        if (texto.isBlank()) {
-            System.out.println("Texto do QR Code vazio!");
+        if (texto.equals("")) {
+            System.out.println("Digite os dados do QR Code!");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImpressaoQRCode(
                     texto, 6, 4
             );
 
             if (retorno == 0) {
+
                 System.out.println("QR Code enviado para impressao!");
                 cortarPapel();
+
             } else {
-                System.out.println("Erro ao imprimir QR Code: " + retorno);
+
+                System.out.println("Erro no QR Code. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir QR Code!");
         }
     }
 
     void imprimirCodigoBarras(String dados) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
-        if (dados.isBlank()) {
-            System.out.println("Dados do codigo de barras vazios!");
+        if (dados.equals("")) {
+            System.out.println("Digite os dados do codigo de barras!");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImpressaoCodigoBarras(
                     8, "{A" + dados, 100, 3, 2
             );
 
             if (retorno == 0) {
+
                 System.out.println("Codigo de barras enviado para impressao!");
                 cortarPapel();
+
             } else {
-                System.out.println("Erro ao imprimir codigo de barras: " + retorno);
+
+                System.out.println("Erro na impressao. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir codigo de barras!");
         }
     }
 
     void imprimirXMLSAT() {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
@@ -257,8 +281,14 @@ class impressora {
 
         File arquivo = new File("XMLSAT.xml");
 
-        if (!arquivo.isFile()) {
-            System.out.println("Arquivo XMLSAT.xml nao encontrado!");
+        try {
+
+            Scanner leitor = new Scanner(arquivo);
+            leitor.close();
+
+        } catch (Exception e) {
+
+            System.out.println("Arquivo XMLSAT.xml indisponivel! :(");
             return;
         }
 
@@ -266,27 +296,33 @@ class impressora {
     }
 
     void imprimirXMLSAT(String xml) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLSAT(xml, 0);
 
             if (retorno == 0) {
+
                 System.out.println("XML SAT enviado para impressao!");
                 cortarPapel();
+
             } else {
-                System.out.println("Erro ao imprimir XML SAT: " + retorno);
+
+                System.out.println("Erro no XML SAT. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir XML SAT!");
         }
     }
 
     void imprimirXMLCancelamento() {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
@@ -294,8 +330,14 @@ class impressora {
 
         File arquivo = new File("CANC_SAT.xml");
 
-        if (!arquivo.isFile()) {
-            System.out.println("Arquivo CANC_SAT.xml nao encontrado!");
+        try {
+
+            Scanner leitor = new Scanner(arquivo);
+            leitor.close();
+
+        } catch (Exception e) {
+
+            System.out.println("Arquivo CANC_SAT.xml indisponivel! :(");
             return;
         }
 
@@ -311,52 +353,55 @@ class impressora {
     }
 
     void imprimirXMLCancelamento(String xml, String assQRCode) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
-        if (assQRCode.isBlank()) {
-            System.out.println("Assinatura QR Code invalida!");
-            return;
-        }
-
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(
                     xml, assQRCode, 0
             );
 
             if (retorno == 0) {
+
                 System.out.println("Cancelamento SAT enviado para impressao!");
                 cortarPapel();
+
             } else {
-                System.out.println("Erro ao imprimir cancelamento: " + retorno);
+
+                System.out.println("Erro no cancelamento. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir cancelamento SAT!");
         }
     }
 
     void abrirGaveta() {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
         }
 
         try {
-            int retorno = ImpressoraDLL.INSTANCE.AbreGaveta(
-                    1, 5, 0
-            );
+
+            int retorno = ImpressoraDLL.INSTANCE.AbreGaveta(1, 5, 10);
 
             if (retorno == 0) {
-                System.out.println("Comando para abrir gaveta enviado!");
+
+                System.out.println("Comando para abrir gaveta enviado! :)");
+
             } else {
-                System.out.println("Erro ao abrir gaveta: " + retorno);
+
+                System.out.println("Erro ao abrir gaveta. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Nao foi possivel abrir a gaveta!");
         }
     }
 
@@ -365,6 +410,7 @@ class impressora {
     }
 
     void sinalSonoro(int quantidade) {
+
         if (!conexaoAberta) {
             System.out.println("Conexao fechada. Abra a conexao antes.");
             return;
@@ -376,33 +422,47 @@ class impressora {
         }
 
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.SinalSonoro(
                     quantidade, 50, 5
             );
 
             if (retorno == 0) {
-                System.out.println("Sinal sonoro executado com sucesso!");
+
+                System.out.println("Sinal sonoro executado com sucesso! :)");
+
             } else {
-                System.out.println("Erro no sinal sonoro: " + retorno);
+
+                System.out.println("Erro no sinal sonoro. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao emitir sinal sonoro!");
         }
     }
 
     void cortarPapel() {
+
+        if (!conexaoAberta) {
+            System.out.println("Conexao fechada. Abra a conexao antes.");
+            return;
+        }
+
         try {
+
             int retorno = ImpressoraDLL.INSTANCE.Corte(5);
 
             if (retorno == 0) {
+
                 System.out.println("Papel cortado com sucesso!");
+
             } else {
-                System.out.println("Erro ao cortar papel: " + retorno);
+
+                System.out.println("Erro ao cortar papel. Codigo: " + retorno);
             }
 
-        } catch (UnsatisfiedLinkError e) {
-            System.out.println("Erro ao acessar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao cortar papel!");
         }
     }
 }
